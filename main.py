@@ -11,7 +11,6 @@ class Main(tk.Frame):
         toolbar = tk.Frame(bg='red', bd=2)
         toolbar.pack(side=tk.TOP, fill=tk.X)
 
-
         # self.add_img = tk.PhotoImage(file="add.gif")
         btn_open_dialog = tk.Button(toolbar, text='Штрихкод (F7)', command=self.open_dialog, bg='#d7d8e0', bd=1,
                                     compound=tk.TOP)
@@ -31,12 +30,12 @@ class Main(tk.Frame):
 
         self.tree.pack(side=tk.BOTTOM)
 
-        #statusbar = tk.Frame(bg='blue', bd=10)
-        #statusbar.pack(side="bottom", fill= tk.X)
+        # statusbar = tk.Frame(bg='blue', bd=10)
+        # statusbar.pack(side="bottom", fill= tk.X)
 
-        #status_text = tk.Label(statusbar,text='Status text')
-        #status_text.place(x=0, y= -10)
-        statusbar = tk.Label(root,text='Status bar',relief=tk.SUNKEN,anchor=tk.W)
+        # status_text = tk.Label(statusbar,text='Status text')
+        # status_text.place(x=0, y= -10)
+        statusbar = tk.Label(root, text='KKM', relief=tk.SUNKEN, anchor=tk.W)
         statusbar.pack(side=tk.BOTTOM, fill=tk.X)
 
     def open_dialog(self):
