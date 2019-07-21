@@ -6,6 +6,8 @@ class Main(tk.Frame):
     def __init__(self, root):
         super().__init__(root)
         self.init_main()
+        self.goods_list = []
+
 
     def init_main(self):
         toolbar = tk.Frame(bg='red', bd=2)
@@ -15,6 +17,10 @@ class Main(tk.Frame):
         btn_open_dialog = tk.Button(toolbar, text='Штрихкод (F7)', command=self.open_dialog, bg='#d7d8e0', bd=1,
                                     compound=tk.TOP)
         btn_open_dialog.pack(side=tk.LEFT)
+
+        btn_addGood = tk.Button(toolbar, text='Добавить товар', command=self.open_addGood, bg='#d7d8e0', bd=1,
+                                    compound=tk.TOP)
+        btn_addGood.pack(side=tk.LEFT)
 
         self.tree = ttk.Treeview(self, columns=('No', 'barcode', 'description', 'price'),
                                  height=15, show='headings')
@@ -38,8 +44,51 @@ class Main(tk.Frame):
         statusbar = tk.Label(root, text='KKM', relief=tk.SUNKEN, anchor=tk.W)
         statusbar.pack(side=tk.BOTTOM, fill=tk.X)
 
+    def add_good_in_check(self,desc,price):
+        self.goods_list.append([desc,price])
+        # self.tree.insert('','end',values=[len(self.goods_list),'',desc,price])
+        self.update_treeview()
+
+    def update_treeview(self):
+        [self.tree.delete(i) for i in self.tree.get_children()]
+        [self.tree.insert('', 'end', values=[idx+1,'',self.goods_list[idx][0],self.goods_list[idx][1]]) for idx in range(len(self.goods_list))]
+
     def open_dialog(self):
         Child()
+
+    def open_addGood(self):
+        addGood()
+
+class addGood(tk.Toplevel):
+    def __init__(self):
+        super().__init__(root)
+        self.init_form()
+        self.mainwindow = app
+
+
+    def init_form(self):
+        self.title('Добавление товара')
+        self.geometry('430x110+100+100')
+        self.resizable(True,True)
+
+        label_GoodDescr = tk.Label(self, text='Наименование:')
+        label_GoodDescr.place(x=10,y=10)
+
+        self.GoodDescr = ttk.Entry(self,width=50)
+        self.GoodDescr.place(x=110,y=10)
+
+        label_Price = tk.Label(self, text='Цена:')
+        label_Price.place(x=10,y=40)
+
+        self.Price = ttk.Entry(self,width=10)
+        self.Price.place(x=110,y=40)
+
+        btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
+        btn_cancel.place(x=150, y=70)
+
+        self.btn_ok = ttk.Button(self, text='Добавить')
+        self.btn_ok.place(x=50, y=70)
+        self.btn_ok.bind('<Button-1>', lambda event: self.mainwindow.add_good_in_check(self.GoodDescr.get(),self.Price.get()))
 
 
 class Child(tk.Toplevel):
@@ -49,7 +98,7 @@ class Child(tk.Toplevel):
 
     def init_child(self):
         self.title('Ввести штрихкод')
-        self.geometry('300x80+400+300')
+        self.geometry('400x380+400+300')
         self.resizable(False, False)
 
         label_barcode = tk.Label(self, text='Штрихкод:')
