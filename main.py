@@ -45,7 +45,7 @@ class Main(tk.Frame):
 
         # status_text = tk.Label(statusbar,text='Status text')
         # status_text.place(x=0, y= -10)
-        statusbar = tk.Label(root, text='KKM', relief=tk.SUNKEN, anchor=tk.W)
+        statusbar = tk.Label(root, text='Подключено оборудование:', relief=tk.SUNKEN, anchor=tk.W)
         statusbar.pack(side=tk.BOTTOM, fill=tk.X)
 
     def DeleteGood(self):
