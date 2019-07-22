@@ -22,6 +22,10 @@ class Main(tk.Frame):
                                     compound=tk.TOP)
         btn_addGood.pack(side=tk.LEFT)
 
+        btn_delGood = tk.Button(toolbar, text='Удалить',command=self.DeleteGood, bg='#d7d8e0', bd=1,
+                                    compound=tk.TOP)
+        btn_delGood.pack(side=tk.LEFT)
+
         self.tree = ttk.Treeview(self, columns=('No', 'barcode', 'description', 'price'),
                                  height=15, show='headings')
         self.tree.column("No", width=30, anchor=tk.CENTER)
@@ -43,6 +47,12 @@ class Main(tk.Frame):
         # status_text.place(x=0, y= -10)
         statusbar = tk.Label(root, text='KKM', relief=tk.SUNKEN, anchor=tk.W)
         statusbar.pack(side=tk.BOTTOM, fill=tk.X)
+
+    def DeleteGood(self):
+        for item in self.tree.selection():
+            elem = int(self.tree.item(item)['values'][0])
+            del self.goods_list[elem-1]
+            self.update_treeview()
 
     def add_good_in_check(self,desc,price):
         self.goods_list.append([desc,price])
@@ -83,12 +93,13 @@ class addGood(tk.Toplevel):
         self.Price = ttk.Entry(self,width=10)
         self.Price.place(x=110,y=40)
 
-        btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
-        btn_cancel.place(x=150, y=70)
-
         self.btn_ok = ttk.Button(self, text='Добавить')
         self.btn_ok.place(x=50, y=70)
         self.btn_ok.bind('<Button-1>', lambda event: self.mainwindow.add_good_in_check(self.GoodDescr.get(),self.Price.get()))
+
+        btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
+        btn_cancel.place(x=150, y=70)
+
 
 
 class Child(tk.Toplevel):
