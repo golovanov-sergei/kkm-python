@@ -10,7 +10,7 @@ class Main(tk.Frame):
 
 
     def init_main(self):
-        toolbar = tk.Frame(bg='red', bd=2)
+        toolbar = ttk.Frame(self, relief=tk.RAISED,borderwidth=1)
         toolbar.pack(side=tk.TOP, fill=tk.X)
 
         # self.add_img = tk.PhotoImage(file="add.gif")
@@ -26,6 +26,16 @@ class Main(tk.Frame):
                                     compound=tk.TOP)
         btn_delGood.pack(side=tk.LEFT)
 
+        btn_Seller = tk.Button(toolbar, text='Продавец',command=self.selectSeller, bg='#d7d8e0', bd=1,
+                                    compound=tk.TOP)
+        btn_Seller.pack(side=tk.LEFT)
+
+        btn_CloseCheck = tk.Button(toolbar, text='Оплата',command=self.closeCheck, bg='#d7d8e0', bd=1,
+                                    compound=tk.TOP)
+        btn_CloseCheck.pack(side=tk.RIGHT)
+
+        frmMain = ttk.Frame(self,borderwidth=1)
+        frmMain.pack(fill=tk.X)
         self.tree = ttk.Treeview(self, columns=('No', 'barcode', 'description', 'price'),
                                  height=15, show='headings')
         self.tree.column("No", width=30, anchor=tk.CENTER)
@@ -48,26 +58,33 @@ class Main(tk.Frame):
         statusbar = tk.Label(root, text='Подключено оборудование:', relief=tk.SUNKEN, anchor=tk.W)
         statusbar.pack(side=tk.BOTTOM, fill=tk.X)
 
+    def closeCheck(self):
+        CloseCheck()
+
+    def selectSeller(self):
+        Child()
+
     def DeleteGood(self):
         for item in self.tree.selection():
             elem = int(self.tree.item(item)['values'][0])
             del self.goods_list[elem-1]
             self.update_treeview()
 
-    def add_good_in_check(self,desc,price):
-        self.goods_list.append([desc,price])
+    def add_good_in_check(self,barcode,desc,price):
+        self.goods_list.append([barcode,desc,price])
         # self.tree.insert('','end',values=[len(self.goods_list),'',desc,price])
         self.update_treeview()
 
     def update_treeview(self):
         [self.tree.delete(i) for i in self.tree.get_children()]
-        [self.tree.insert('', 'end', values=[idx+1,'',self.goods_list[idx][0],self.goods_list[idx][1]]) for idx in range(len(self.goods_list))]
+        [self.tree.insert('', 'end', values=[idx+1,self.goods_list[idx][0],self.goods_list[idx][1],self.goods_list[idx][2]]) for idx in range(len(self.goods_list))]
 
     def open_dialog(self):
         Child()
 
     def open_addGood(self):
         addGood()
+
 
 class addGood(tk.Toplevel):
     def __init__(self):
@@ -78,28 +95,33 @@ class addGood(tk.Toplevel):
 
     def init_form(self):
         self.title('Добавление товара')
-        self.geometry('430x110+100+100')
+        self.geometry('430x140+100+100')
         self.resizable(True,True)
 
+        label_Barcode = tk.Label(self, text='Штрихкод:')
+        label_Barcode.place(x=10,y=10)
+
+        self.Barcode = ttk.Entry(self,width=15)
+        self.Barcode.place(x=110,y=10)
+
         label_GoodDescr = tk.Label(self, text='Наименование:')
-        label_GoodDescr.place(x=10,y=10)
+        label_GoodDescr.place(x=10,y=40)
 
         self.GoodDescr = ttk.Entry(self,width=50)
-        self.GoodDescr.place(x=110,y=10)
+        self.GoodDescr.place(x=110,y=40)
 
         label_Price = tk.Label(self, text='Цена:')
-        label_Price.place(x=10,y=40)
+        label_Price.place(x=10,y=70)
 
         self.Price = ttk.Entry(self,width=10)
-        self.Price.place(x=110,y=40)
+        self.Price.place(x=110,y=70)
 
         self.btn_ok = ttk.Button(self, text='Добавить')
-        self.btn_ok.place(x=50, y=70)
-        self.btn_ok.bind('<Button-1>', lambda event: self.mainwindow.add_good_in_check(self.GoodDescr.get(),self.Price.get()))
+        self.btn_ok.place(x=50, y=110)
+        self.btn_ok.bind('<Button-1>', lambda event: self.mainwindow.add_good_in_check(self.Barcode.get(),self.GoodDescr.get(),self.Price.get()))
 
         btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
-        btn_cancel.place(x=150, y=70)
-
+        btn_cancel.place(x=150, y=110)
 
 
 class Child(tk.Toplevel):
@@ -128,6 +150,28 @@ class Child(tk.Toplevel):
         btn_ok = ttk.Button(self, text='Добавить')
         btn_ok.place(x=220, y=170)
         btn_ok.bind('<Button-1>')
+
+        self.grab_set()
+        self.focus_set()
+
+
+class CloseCheck(tk.Toplevel):
+    def __init__(self):
+        super().__init__(root)
+        self.initForm()
+
+    def initForm(self):
+        self.title('Закрытие чека')
+        self.geometry('420x360+400+300')
+        self.resizable(False,False)
+        frame = ttk.Frame(self, relief=tk.RAISED, borderwidth=1)
+        frame.pack(fill=tk.BOTH, expand=True)
+        # self.pack(fill=tk.BOTH, expand=True)
+
+        closeButton = ttk.Button(self, text="Close")
+        closeButton.pack(side=tk.CENTER, padx=5, pady=5)
+        okButton = ttk.Button(self, text="OK")
+        okButton.pack(side=tk.CENTER)
 
         self.grab_set()
         self.focus_set()
