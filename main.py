@@ -174,6 +174,7 @@ class CloseCheck(tk.Toplevel):
         self.title('Закрытие чека')
         #self.geometry('420x360+400+300')
         self.resizable(True,True)
+        #self.columnconfigure()
         #frame = ttk.Frame(self, relief=tk.RAISED, borderwidth=1)
         #frame.pack(fill=tk.BOTH, expand=True)
         # self.pack(fill=tk.BOTH, expand=True)
