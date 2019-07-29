@@ -10,33 +10,33 @@ class Main(tk.Frame):
 
 
     def init_main(self):
-        toolbar = ttk.Frame(self, relief=tk.RAISED,borderwidth=1)
-        toolbar.pack(side=tk.TOP, fill=tk.X)
+        frameMain = tk.Frame(self, relief=tk.RAISED,borderwidth=1)
+        frameMain.pack(side=tk.TOP, fill=tk.BOTH)
 
         # self.add_img = tk.PhotoImage(file="add.gif")
-        btn_open_dialog = tk.Button(toolbar, text='Штрихкод (F7)', command=self.open_dialog, bg='#d7d8e0', bd=1,
-                                    compound=tk.TOP)
-        btn_open_dialog.pack(side=tk.LEFT)
+        btn_open_dialog = tk.Button(frameMain, text='Штрихкод (F7)', command=self.open_dialog, bg='#d7d8e0', bd=1,
+                                    compound=tk.TOP,width=15)
+        btn_open_dialog.grid(row=0,column=0)
 
-        btn_addGood = tk.Button(toolbar, text='Добавить товар', command=self.open_addGood, bg='#d7d8e0', bd=1,
-                                    compound=tk.TOP)
-        btn_addGood.pack(side=tk.LEFT)
+        btn_addGood = tk.Button(frameMain, text='Добавить товар', command=self.open_addGood, bg='#d7d8e0', bd=1,
+                                    compound=tk.TOP,width=15)
+        btn_addGood.grid(row=0,column=1)
 
-        btn_delGood = tk.Button(toolbar, text='Удалить',command=self.DeleteGood, bg='#d7d8e0', bd=1,
-                                    compound=tk.TOP)
-        btn_delGood.pack(side=tk.LEFT)
+        btn_delGood = tk.Button(frameMain, text='Удалить',command=self.DeleteGood, bg='#d7d8e0', bd=1,
+                                    compound=tk.TOP,width=15)
+        btn_delGood.grid(row=0,column=2)
 
-        btn_Seller = tk.Button(toolbar, text='Продавец',command=self.selectSeller, bg='#d7d8e0', bd=1,
-                                    compound=tk.TOP)
-        btn_Seller.pack(side=tk.LEFT)
+        btn_Seller = tk.Button(frameMain, text='Продавец',command=self.selectSeller, bg='#d7d8e0', bd=1,
+                                    compound=tk.TOP,width=15)
+        btn_Seller.grid(row=0,column=3)
 
-        btn_CloseCheck = tk.Button(toolbar, text='Оплата',command=self.closeCheck, bg='#d7d8e0', bd=1,
-                                    compound=tk.TOP)
-        btn_CloseCheck.pack(side=tk.RIGHT)
+        btn_CloseCheck = tk.Button(frameMain, text='Оплата',command=self.closeCheck, bg='#d7d8e0', bd=1,
+                                    compound=tk.TOP,width=15)
+        btn_CloseCheck.grid(row=0,column=4)
 
-        frmMain = ttk.Frame(self,borderwidth=1)
-        frmMain.pack(fill=tk.X)
-        self.tree = ttk.Treeview(self, columns=('No', 'barcode', 'description', 'price'),
+        #frmMain = ttk.Frame(self,borderwidth=1)
+        #frmMain.pack(fill=tk.X)
+        self.tree = ttk.Treeview(frameMain, columns=('No', 'barcode', 'description', 'price'),
                                  height=15, show='headings')
         self.tree.column("No", width=30, anchor=tk.CENTER)
         self.tree.column("barcode", width=150, anchor=tk.CENTER)
@@ -48,7 +48,17 @@ class Main(tk.Frame):
         self.tree.heading("description", text='Описание')
         self.tree.heading("price", text='Цена')
 
-        self.tree.pack(side=tk.BOTTOM)
+        self.tree.grid(row=1,column=0,columnspan=5)
+
+        self.seller_label=tk.Label(frameMain,text='Продавец:')
+        self.seller=tk.Label(frameMain,fg='red',text='не выбран',font=('Arial',10,'bold'))
+        self.total_label=tk.Label(frameMain,text='Итого:')
+        self.total=tk.Label(frameMain,text='0,00')
+
+        self.seller_label.grid(row=2)
+        self.seller.grid(row=2,column=1)
+        self.total_label.grid(row=2,column=2)
+        self.total.grid(row=2,column=3)
 
         # statusbar = tk.Frame(bg='blue', bd=10)
         # statusbar.pack(side="bottom", fill= tk.X)
@@ -169,9 +179,9 @@ class CloseCheck(tk.Toplevel):
         # self.pack(fill=tk.BOTH, expand=True)
 
         closeButton = ttk.Button(self, text="Close")
-        closeButton.pack(side=tk.CENTER, padx=5, pady=5)
+        closeButton.pack(padx=5, pady=5)
         okButton = ttk.Button(self, text="OK")
-        okButton.pack(side=tk.CENTER)
+        okButton.pack(padx=5, pady=5)
 
         self.grab_set()
         self.focus_set()
