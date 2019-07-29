@@ -172,16 +172,32 @@ class CloseCheck(tk.Toplevel):
 
     def initForm(self):
         self.title('Закрытие чека')
-        self.geometry('420x360+400+300')
-        self.resizable(False,False)
-        frame = ttk.Frame(self, relief=tk.RAISED, borderwidth=1)
-        frame.pack(fill=tk.BOTH, expand=True)
+        #self.geometry('420x360+400+300')
+        self.resizable(True,True)
+        #self.columnconfigure()
+        #frame = ttk.Frame(self, relief=tk.RAISED, borderwidth=1)
+        #frame.pack(fill=tk.BOTH, expand=True)
         # self.pack(fill=tk.BOTH, expand=True)
 
+        label_total=ttk.Label(self,text='Всего к оплате:')
+        label_change=ttk.Label(self,text='Сдача:')
+        label_total.grid(row=0,column=0,sticky='W',padx=5, pady=5)
+        label_change.grid(row=0,column=1,sticky='W',padx=5, pady=5)
+
+        entry_total = ttk.Entry(self,width=15)
+        entry_change = ttk.Entry(self,width=15)
+        entry_total.grid(row=1,column=0,padx=5, pady=5,sticky='W')
+        entry_change.grid(row=1, column=1,padx=5, pady=5,sticky='W')
+
+        label_payed=ttk.Label(self,text='Вносимая сумма:')
+        label_payed.grid(row=2,column=0,sticky='W',padx=5, pady=5,columnspan=2)
+        entry_payed=ttk.Entry(self)
+        entry_payed.grid(row=3,column=0,padx=5, pady=5,columnspan=2,sticky=tk.N+tk.S+tk.E+tk.W)
+
         closeButton = ttk.Button(self, text="Close")
-        closeButton.pack(padx=5, pady=5)
+        closeButton.grid(row=5,column=1,padx=5, pady=5)
         okButton = ttk.Button(self, text="OK")
-        okButton.pack(padx=5, pady=5)
+        okButton.grid(row=5,column=0,padx=5, pady=5)
 
         self.grab_set()
         self.focus_set()
