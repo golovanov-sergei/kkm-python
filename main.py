@@ -1,6 +1,53 @@
+import win32com.client
 import tkinter as tk
 from tkinter import ttk
 
+
+class Check:
+    def __init__(self):
+        self.frDrv = win32com.client.Dispatch('Addin.DRvFR')
+        self.goodslist = []
+        self.seller = ''
+        self.frDrv.FindDevice()
+        self.frDrv.Password = 30
+        self.frDrv.ProtocolType = 0
+        self.frDrv.ConnectionType = 0
+
+        self.frDrv.Connect()
+        self.frDrv.Disconnect()
+
+        self.devicename=self.frDrv.UDescription
+        self.status=self.frDrv.ECRModeDescription
+        self.clearCheck()
+
+    def clearCheck(self):
+        self.goodslist.clear()
+        self.seller = 'не выбран'
+        self.frDrv.Summ1 = 0
+        self.frDrv.Summ2 = 0
+        self.frDrv.Summ3 = 0
+        self.frDrv.Summ4 = 0
+        self.frDrv.Summ5 = 0
+        self.frDrv.Summ6 = 0
+        self.frDrv.Summ7 = 0
+        self.frDrv.Summ8 = 0
+        self.frDrv.Summ9 = 0
+        self.frDrv.Summ10 = 0
+        self.frDrv.Summ11 = 0
+        self.frDrv.Summ12 = 0
+        self.frDrv.Summ13 = 0
+        self.frDrv.Summ14 = 0
+        self.frDrv.Summ15 = 0
+        self.frDrv.Summ16 = 0
+        self.frDrv.RoundingSumm = 0
+        self.frDrv.TaxValue1 = 0
+        self.frDrv.TaxValue2 = 0
+        self.frDrv.TaxValue3 = 0
+        self.frDrv.TaxValue4 = 0
+        self.frDrv.TaxValue5 = 0
+        self.frDrv.TaxValue6 = 0
+        self.frDrv.TaxType = 8
+        self.frDrv.StringForPrinting = ''
 
 
 class Main(tk.Frame):
@@ -8,7 +55,7 @@ class Main(tk.Frame):
         super().__init__(root)
         self.init_main()
         self.goods_list = []
-        self.topay = '500.00'
+        # self.topay = '500.00'
 
     def init_main(self):
         frameMain = tk.Frame(self, relief=tk.RAISED, borderwidth=1)
@@ -52,7 +99,7 @@ class Main(tk.Frame):
         self.tree.grid(row=1, column=0, columnspan=5)
 
         self.seller_label = tk.Label(frameMain, text='Продавец:')
-        self.seller = tk.Label(frameMain, fg='red', text='не выбран', font=('Arial', 10, 'bold'))
+        self.seller = tk.Label(frameMain, fg='red', text=sell.seller, font=('Arial', 10, 'bold'))
         self.total_label = tk.Label(frameMain, text='Итого:')
         self.total = tk.Label(frameMain, text='0,00')
 
@@ -66,7 +113,7 @@ class Main(tk.Frame):
 
         # status_text = tk.Label(statusbar,text='Status text')
         # status_text.place(x=0, y= -10)
-        statusbar = tk.Label(root, text='Подключено оборудование:', relief=tk.SUNKEN, anchor=tk.W)
+        statusbar = tk.Label(root, text='Найдено оборудование: '+sell.devicename+'. '+sell.status, relief=tk.SUNKEN, anchor=tk.W)
         statusbar.pack(side=tk.BOTTOM, fill=tk.X)
 
     def closeCheck(self):
@@ -78,19 +125,20 @@ class Main(tk.Frame):
     def DeleteGood(self):
         for item in self.tree.selection():
             elem = int(self.tree.item(item)['values'][0])
-            del self.goods_list[elem - 1]
+            del sell.goodslist[elem - 1]
             self.update_treeview()
 
     def add_good_in_check(self, barcode, desc, price):
-        self.goods_list.append([barcode, desc, price])
+        sell.goodslist.append([barcode, desc, price])
+        # self.goods_list.append([barcode, desc, price])
         # self.tree.insert('','end',values=[len(self.goods_list),'',desc,price])
         self.update_treeview()
 
     def update_treeview(self):
         [self.tree.delete(i) for i in self.tree.get_children()]
         [self.tree.insert('', 'end',
-                          values=[idx + 1, self.goods_list[idx][0], self.goods_list[idx][1], self.goods_list[idx][2]])
-         for idx in range(len(self.goods_list))]
+                          values=[idx + 1, sell.goodslist[idx][0], sell.goodslist[idx][1], sell.goodslist[idx][2]])
+         for idx in range(len(sell.goodslist))]
 
     def open_dialog(self):
         Child()
@@ -172,13 +220,15 @@ class Child(tk.Toplevel):
 class CloseCheck(tk.Toplevel):
     def __init__(self):
         super().__init__(root)
-        self.tpw = app.topay
+        # self.tpw = app.topay
         self.initForm()
 
     def initForm(self):
         # Styles
         s = ttk.Style()
         s.configure('TButton', font=('Arial', '12', 'bold'))
+        val=tk.StringVar()
+
 
         self.title('Закрытие чека')
         self.geometry('+400+300')
@@ -197,7 +247,7 @@ class CloseCheck(tk.Toplevel):
         entry_change = ttk.Entry(self, width=15, font='Arial 16 bold', justify=tk.RIGHT)
         entry_total.grid(row=1, column=0, padx=5, pady=2, sticky=tk.N + tk.S + tk.E + tk.W)
         entry_change.grid(row=1, column=1, padx=5, pady=2, sticky=tk.N + tk.S + tk.E + tk.W)
-        entry_total.insert(0, self.tpw)
+        entry_total.insert(0, '0.00')
         entry_change.insert(0, '0.00')
         entry_change['state'] = 'readonly'
         entry_total['state'] = 'readonly'
@@ -231,6 +281,7 @@ class CloseCheck(tk.Toplevel):
 
 
 if __name__ == "__main__":
+    sell=Check()
     root = tk.Tk()
     app = Main(root)
     app.pack()
