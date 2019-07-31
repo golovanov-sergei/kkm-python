@@ -1,6 +1,59 @@
 import win32com.client
 import tkinter as tk
 from tkinter import ttk
+# from tkinter import simpledialog
+
+
+class getSum(object):
+    def __init__(self, parent):
+        self.toplevel = tk.Toplevel(parent)
+
+        self.val = tk.StringVar()
+        self.val.set("0.00")
+
+        label = ttk.Label(self.toplevel, text="Введите сумму:  ",width=20)
+        self.entrySum = ttk.Entry(self.toplevel,textvariable=self.val, justify=tk.RIGHT)
+
+        label.grid(row=0, padx=3, pady=5)
+        self.entrySum.grid(row=0,column=1, padx=3, pady=5)
+
+        self.entrySum.bind('<Return>', self.getSelection)
+        self.entrySum.selection_range(0, tk.END)
+        self.entrySum.focus_set()
+
+    def getSelection(self,event):
+        self.val.set(self.entrySum.get())
+        self.toplevel.destroy()
+
+    def returnValue(self):
+        self.toplevel.wait_window()
+        return float(self.val.get())
+
+
+class getText(object):
+    def __init__(self, parent):
+        self.toplevel = tk.Toplevel(parent)
+
+        self.val = tk.StringVar()
+        self.val.set("")
+
+        label = ttk.Label(self.toplevel, text="Введите строку:  ",width=20)
+        self.entrySum = ttk.Entry(self.toplevel,textvariable=self.val, justify=tk.LEFT, width = 15)
+
+        label.grid(row=0, padx=3, pady=5)
+        self.entrySum.grid(row=0,column=1, padx=3, pady=5)
+
+        self.entrySum.bind('<Return>', self.getSelection)
+        self.entrySum.selection_range(0, tk.END)
+        self.entrySum.focus_set()
+
+    def getSelection(self,event):
+        self.val.set(self.entrySum.get())
+        self.toplevel.destroy()
+
+    def returnValue(self):
+        self.toplevel.wait_window()
+        return (self.val.get())
 
 
 class Check:
@@ -62,9 +115,9 @@ class Main(tk.Frame):
         frameMain.pack(side=tk.TOP, fill=tk.BOTH)
 
         # self.add_img = tk.PhotoImage(file="add.gif")
-        btn_open_dialog = tk.Button(frameMain, text='Штрихкод (F7)', command=self.open_dialog, bg='#d7d8e0', bd=1,
+        btn_addGoodBarcode = tk.Button(frameMain, text='Штрихкод (F7)', bg='#d7d8e0', bd=1,
                                     compound=tk.TOP, width=15)
-        btn_open_dialog.grid(row=0, column=0)
+        btn_addGoodBarcode.grid(row=0, column=0)
 
         btn_addGood = tk.Button(frameMain, text='Добавить товар', command=self.open_addGood, bg='#d7d8e0', bd=1,
                                 compound=tk.TOP, width=15)
@@ -115,6 +168,9 @@ class Main(tk.Frame):
         # status_text.place(x=0, y= -10)
         statusbar = tk.Label(root, text='Найдено оборудование: '+sell.devicename+'. '+sell.status, relief=tk.SUNKEN, anchor=tk.W)
         statusbar.pack(side=tk.BOTTOM, fill=tk.X)
+        frameMain.bind('<F7>',self.getBarcode)
+        frameMain.focus_set()
+
 
     def closeCheck(self):
         CloseCheck()
@@ -140,8 +196,8 @@ class Main(tk.Frame):
                           values=[idx + 1, sell.goodslist[idx][0], sell.goodslist[idx][1], sell.goodslist[idx][2]])
          for idx in range(len(sell.goodslist))]
 
-    def open_dialog(self):
-        Child()
+    def getBarcode(self, event):
+        result = getText(self).returnValue()
 
     def open_addGood(self):
         addGood()
@@ -191,6 +247,10 @@ class Child(tk.Toplevel):
         super().__init__(root)
         self.init_child()
 
+    def close_child(self):
+        print(0)
+        return 5
+
     def init_child(self):
         self.title('Ввести штрихкод')
         self.geometry('400x380+400+300')
@@ -209,12 +269,13 @@ class Child(tk.Toplevel):
         btn_cancel = ttk.Button(self, text='Закрыть', command=self.destroy)
         btn_cancel.place(x=300, y=170)
 
-        btn_ok = ttk.Button(self, text='Добавить')
+        btn_ok = ttk.Button(self, text='Добавить',command=self.close_child())
         btn_ok.place(x=220, y=170)
         btn_ok.bind('<Button-1>')
 
         self.grab_set()
         self.focus_set()
+        self.wait_window()
 
 
 class CloseCheck(tk.Toplevel):
@@ -222,6 +283,11 @@ class CloseCheck(tk.Toplevel):
         super().__init__(root)
         # self.tpw = app.topay
         self.initForm()
+
+    def get_sum(self):
+        # s = simpledialog.askfloat('Ввод суммы','Введите сумму',initialvalue=0.00)
+        result = getSum(self).returnValue()
+        self.cashButton.configure(text='Наличные (%s)' % result)
 
     def initForm(self):
         # Styles
@@ -259,12 +325,12 @@ class CloseCheck(tk.Toplevel):
         entry_payed['state'] = 'readonly'
         entry_payed.grid(row=3, column=0, padx=5, pady=2, columnspan=2, sticky=tk.N + tk.S + tk.E + tk.W)
 
-        cashButton = ttk.Button(self, text='Наличные', width=25, style='TButton')
+        self.cashButton = ttk.Button(self, text='Наличные', width=25, style='TButton',command=self.get_sum)
         cardButton = ttk.Button(self, text='Карта', width=25, style='TButton')
         closeButton = ttk.Button(self, text="Закрыть чек", width=25, style='TButton')
         cancelButton = ttk.Button(self, text="Отменить чек", width=25, style='TButton')
 
-        cashButton.grid(row=4, columnspan=2, padx=5, pady=2)
+        self.cashButton.grid(row=4, columnspan=2, padx=5, pady=2)
         cardButton.grid(row=5, columnspan=2, padx=5, pady=2)
         closeButton.grid(row=6, columnspan=2, padx=5, pady=2)
         cancelButton.grid(row=7, columnspan=2, padx=5, pady=2)
@@ -278,6 +344,7 @@ class CloseCheck(tk.Toplevel):
 
         self.grab_set()
         self.focus_set()
+
 
 
 if __name__ == "__main__":
